@@ -52,7 +52,7 @@
                destdir="${output_dir}"
                fork="yes" memoryInitialSize="${initheapsize}" memoryMaximumSize="${maxheapsize}" verbose="no"
                debug="${debug}" deprecation="${deprecation}">
-            <classpath refid="standard_classpath"/>
+			<compilerarg value="-Xbootclasspath/p:${toString:standard_classpath}"/>
         </javac>
         <copy todir="${output_dir}">
             <fileset dir="${src_dir}" includes="**/*.gif,**/*.jpg,**/*.png,**/*.properties,**/*.ttf,**/*.vm"/>

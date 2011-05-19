@@ -1,0 +1,10 @@
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra"> 
+	<info organisation="com.jidesoft" module="jide-oss"/>
+		
+	<configurations><include file="${sbuild.configurations}"/></configurations>
+
+	<dependencies>
+		<!-- Put dependencies here -->
+	</dependencies>
+
+</ivy-module>

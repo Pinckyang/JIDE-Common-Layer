@@ -338,8 +338,11 @@ abstract public class StandardDialog extends JDialog implements ButtonNames {
             }
         };
         JButton okButton = new JButton(okAction);
+        okButton.setName(OK);
         buttonPanel.addButton(okButton, ButtonPanel.AFFIRMATIVE_BUTTON);
-        buttonPanel.addButton(new JButton(cancelAction), ButtonPanel.CANCEL_BUTTON);
+        JButton cancelButton = new JButton(cancelAction);
+        cancelButton.setName(CANCEL);
+        buttonPanel.addButton(cancelButton, ButtonPanel.CANCEL_BUTTON);
 
         setDefaultCancelAction(cancelAction);
         setDefaultAction(okAction);

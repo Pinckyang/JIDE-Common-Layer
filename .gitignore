@@ -1,4 +1,6 @@
-classes/*
 javadoc/*
 jide-oss-*.jar
 jide-oss-*.zip
+target/**
+lib/**
+bin/**

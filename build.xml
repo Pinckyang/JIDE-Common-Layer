@@ -16,4 +16,10 @@
 	<property environment="env"/>
 	<import file="${env.SBUILD_HOME}/skybuilder.xml"/>
 
+	<target name="copy-jide-resources"  extensionOf="extension.compile">
+		<copy todir="${target.classes}"> <!-- Not the best place to copy these... but it works -->
+			<fileset dir="${base.src_dir}" includes="**/*.gif,**/*.jpg,**/*.png,**/*.properties,**/*.ttf,**/*.vm"/>
+		</copy>
+	</target>
+
 </project>

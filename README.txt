@@ -16,6 +16,8 @@ The contents of the distributions are:
 Build
 ----------
 
+I'm using my own custom build scripts on the develop branch. So... merge changes in develop to master for the src/ directory. Then do the JIDE Common standard build: 
+
 You can use your favorite Java IDE to build this project. By default, we provided ant script (build.xml) to build the project. You can download ant from http://ant.apache.org/. Once you install it, you can run 
 
 "ant" or "ant dist"

@@ -12,6 +12,7 @@ import com.jidesoft.swing.JideScrollPane;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -43,6 +44,11 @@ import java.util.*;
  * is added to StandardDialog.
  */
 public class MultiplePageDialogPane extends StandardDialogPane {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8968638943947885121L;
+
     /**
      * Predefined style of multiple page dialog.
      */
@@ -83,7 +89,7 @@ public class MultiplePageDialogPane extends StandardDialogPane {
      * Map that maps from page full title to tree node. It provides a fast access from page full title to the tree node
      * in TREE_STYLE.
      */
-    private Map _titleNodeMap;
+    private Map<String, MutableTreeNode> _titleNodeMap;
 
     private JButton _okButton;
     private JButton _cancelButton;
@@ -197,7 +203,12 @@ public class MultiplePageDialogPane extends StandardDialogPane {
         _okButton.setAction(getOKAction());
         _cancelButton.setAction(getCancelAction());
         _applyButton.setAction(new AbstractAction(ButtonResources.getResourceBundle(Locale.getDefault()).getString("Button.apply")) {
-            public void actionPerformed(ActionEvent e) {
+            /**
+	     * 
+	     */
+	    private static final long serialVersionUID = 3413994234663396927L;
+
+	    public void actionPerformed(ActionEvent e) {
                 if (getCurrentPage() != null) {
                     getCurrentPage().fireButtonEvent(ButtonEvent.DISABLE_BUTTON, APPLY);
                 }
@@ -398,11 +409,13 @@ public class MultiplePageDialogPane extends StandardDialogPane {
                     }
                 }
 
+                /*
                 private void dumpPagesPanel() {
                     for (int i = 0; i < pagesPanel.getComponentCount(); i++) {
                         System.out.println("" + i + ": " + pagesPanel.getComponent(i).getName());
                     }
                 }
+                */
 
                 public void contentsChanged(ListDataEvent e) {
                     if (e.getSource() instanceof PageList) {
@@ -522,7 +535,7 @@ public class MultiplePageDialogPane extends StandardDialogPane {
     private JComponent createTreePanel() {
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode("", true);
 
-        _titleNodeMap = new HashMap((int) (_pageList.getPageCount() * 0.75));
+        _titleNodeMap = new HashMap<String, MutableTreeNode>((int) (_pageList.getPageCount() * 0.75));
         for (int i = 0; i < _pageList.getPageCount(); i++) {
             AbstractDialogPage dialogPage = _pageList.getPage(i);
             addPage(dialogPage, root, false);
@@ -540,8 +553,8 @@ public class MultiplePageDialogPane extends StandardDialogPane {
 
             public void intervalRemoved(ListDataEvent e) {
                 // compare PageList with TitleNodeMap to find out what is missing
-                Set set = _titleNodeMap.keySet();
-                Vector toBeRemoved = new Vector();
+                Set<String> set = _titleNodeMap.keySet();
+                Vector<String> toBeRemoved = new Vector<String>();
                 for (Object o : set) {
                     String title = (String) o;
                     if (_pageList.getPageByFullTitle(title) == null) {
@@ -567,7 +580,7 @@ public class MultiplePageDialogPane extends StandardDialogPane {
                     if (_titleNodeMap != null && _pageList.getCurrentPage() != null) {
                         TreeNode node = (TreeNode) _titleNodeMap.get(_pageList.getCurrentPage().getFullTitle());
                         if (node != null) {
-                            ArrayList list = new ArrayList();
+                            ArrayList<TreeNode> list = new ArrayList<TreeNode>();
                             while (node != null) {
                                 list.add(0, node);
                                 node = node.getParent();
@@ -715,6 +728,7 @@ public class MultiplePageDialogPane extends StandardDialogPane {
         });
     }
 
+    /*
     private void removePage(AbstractDialogPage dialogPage, final DefaultMutableTreeNode root, boolean fireEvent) {
         if (dialogPage == null) {
             return;
@@ -748,6 +762,7 @@ public class MultiplePageDialogPane extends StandardDialogPane {
             }
         }
     }
+    */
 
     private JComponent createListPanel() {
         final DefaultListModel listModel = new DefaultListModel();
@@ -846,7 +861,12 @@ public class MultiplePageDialogPane extends StandardDialogPane {
             button.setToolTipText(optionsPanel.getDescription());
             button.setEnabled(optionsPanel.isPageEnabled());
             button.addActionListener(new AbstractAction() {
-                public void actionPerformed(ActionEvent e) {
+                /**
+		 * 
+		 */
+		private static final long serialVersionUID = -8913013217983540816L;
+
+		public void actionPerformed(ActionEvent e) {
                     setCurrentPage(optionsPanel, buttonsPanel);
                     if (getCurrentPage() == optionsPanel) {
                         group.setSelected(button.getModel(), true);
@@ -880,7 +900,12 @@ public class MultiplePageDialogPane extends StandardDialogPane {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         final JScrollPane pane = new JScrollPane(buttonsPanel) {
-            @Override
+            /**
+	     * 
+	     */
+	    private static final long serialVersionUID = 7258489670834946958L;
+
+	    @Override
             public Dimension getPreferredSize() {
                 if (buttonsPanel.getAlignment() == SwingConstants.TOP || buttonsPanel.getAlignment() == SwingConstants.BOTTOM)
                     return new Dimension(buttonsPanel.getPreferredSize().width + getVerticalScrollBar().getPreferredSize().width, 5);
@@ -945,7 +970,12 @@ public class MultiplePageDialogPane extends StandardDialogPane {
         AbstractDialogPage optionsPanel = _pageList.getPage(i);
         final JideButton button = createIconButton(optionsPanel.getTitle(), optionsPanel.getIcon());
         button.addActionListener(new AbstractAction(optionsPanel.getTitle(), optionsPanel.getIcon()) {
-            public void actionPerformed(ActionEvent e) {
+            /**
+	     * 
+	     */
+	    private static final long serialVersionUID = -2375074433514421417L;
+
+	    public void actionPerformed(ActionEvent e) {
                 group.setSelected(button.getModel(), true);
                 setCurrentPage(_pageList.getPageByFullTitle(e.getActionCommand()), buttonsPanel);
             }

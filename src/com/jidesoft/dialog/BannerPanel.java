@@ -25,6 +25,11 @@ import java.beans.PropertyChangeListener;
 public class BannerPanel extends JPanel {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -7191474275030489327L;
+
+    /**
      * Title of the banner panel.
      */
     protected String _title;
@@ -142,7 +147,12 @@ public class BannerPanel extends JPanel {
         }
 
         _subtitleLabel = new MultilineLabel(getSubtitle()) {
-            @Override
+            /**
+	     * 
+	     */
+	    private static final long serialVersionUID = -1609681547852636926L;
+
+	    @Override
             public Dimension getMinimumSize() {
                 return new Dimension(0, 0);
             }
@@ -156,7 +166,12 @@ public class BannerPanel extends JPanel {
         _textPanel.add(_subtitleLabel, BorderLayout.CENTER);
 
         _titleLabel = new JLabel(getTitle()) {
-            @Override
+            /**
+	     * 
+	     */
+	    private static final long serialVersionUID = -5832474694740336965L;
+
+	    @Override
             public Dimension getMinimumSize() {
                 return new Dimension(0, super.getMinimumSize().height);
             }

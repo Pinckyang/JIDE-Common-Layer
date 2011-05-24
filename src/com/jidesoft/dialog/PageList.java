@@ -16,6 +16,11 @@ import java.util.List;
  */
 public class PageList extends DefaultComboBoxModel {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 436559750018384074L;
+
+    /**
      * If you know the full title of any page, use this method to get the actual page from the list.
      *
      * @param title the full title.

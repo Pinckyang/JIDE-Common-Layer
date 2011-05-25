@@ -18,6 +18,10 @@ import java.awt.*;
  */
 public class DialogPageTreeCellRenderer extends JLabel implements TreeCellRenderer {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 3680042627478398736L;
+    /**
      * text selection color
      */
     private Color _selectedForeground;

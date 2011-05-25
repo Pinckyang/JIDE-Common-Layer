@@ -1,318 +1,197 @@
+/*
+ * @(#)TristateCheckBoxEx.java 5/20/2011
+ *
+ * Copyright 2002 - 2011 JIDE Software Inc. All rights reserved.
+ */
+
 package com.jidesoft.swing;
 
-import com.jidesoft.plaf.LookAndFeelFactory;
+import com.jidesoft.plaf.UIDefaultsLookup;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.plaf.ActionMapUIResource;
-import java.awt.event.*;
 
 /**
- * Maintenance tip - There were some tricks to getting this code working:
+ * TristateCheckBox is a check box with three states - selected, unselected and mixed (a.k.a partial selected state).
+ * Internally it uses a new class called {@link TristateButtonModel} to store the 3rd mixed state information.
  * <p/>
- * 1. You have to overwrite addMouseListener() to do nothing 2. You have to add a mouse event on mousePressed by calling
- * super.addMouseListener() 3. You have to replace the UIActionMap for the keyboard event "pressed" with your own one.
- * 4. You have to remove the UIActionMap for the keyboard event "released". 5. You have to grab focus when the next
- * state is entered, otherwise clicking on the component won't get the focus. 6. You have to make a TristateDecorator as
- * a button model that wraps the original button model and does state management.
- * <p/>
- * To get notified for the state change, usually people use itemChange listener for a regular JCheckBox but for
- * TristateCheckBox, it doesn't work very well. It would be better to use addPropertyChangeListener on PROPERTY_STATE
- * property. It will be fired whenever the state is changed.
- *
- * @author Dr. Heinz M. Kabutz
- * @author JIDE Software
+ * The mixed state uses a different check icon. Instead of a checked sign in the selected state as in a regular check
+ * box, we use a square sign to indicate the mixed state. On different L&Fs, it might look different. TristateCheckBox
+ * supports most of the standard L&Fs such as Windows L&F, Metal L&F, Motif L&F, Nimbus L&F, Aqua L&F etc. For most
+ * L&Fs, we use a new UIDefault "TristateCheckBox.icon" to paint in three different states. However for Aqua L&F, we
+ * actually leveraged a client property provided by Apple to display the icon for the mixed state (refer to Radar
+ * #8930094 at http://developer.apple.com/library/mac/#releasenotes/Java/JavaSnowLeopardUpdate4LeopardUpdate9RN/ResolvedIssues/ResolvedIssues.html).
+ * To make it extensible for other L&Fs who might provide a built-in mixed state for check box, we support two types of
+ * customizations.
+ * <pre>
+ * <ul>
+ *     <li>using client property as Aqua. You can define your own client properties and use UIDefaults to tell us how
+ * to set it. For example: </li>
+ * "TristateCheckBox.icon", null,
+ * "TristateCheckBox.setMixed.clientProperty", new Object[]{"JButton.selectedState", "indeterminate"},
+ * "TristateCheckBox.clearMixed.clientProperty", new Object[]{"JButton.selectedState", null},
+ * </ul>using component name. Some Synth-based L&Fs use component name to define style. If so, you can use the
+ * following two UIDefaults. For example: </li>
+ * "TristateCheckBox.setMixed.componentName", "HalfSelected",
+ * "TristateCheckBox.clearMixed.componentName", "",
+ * </pre>
+ * The correct listener for state change is ActionListener. It will be fired when the state is changed. The ItemListener
+ * is only fired when changing from selected state to unselected state or vice versa. Only ActionListener will be fired
+ * for all three states.
  */
 public class TristateCheckBox extends JCheckBox {
-    /**
-     * Property name for the state. Listen to this property change if you want to get notified for the state change.
-     */
-    public final static String PROPERTY_STATE = "state";
+    public static final int STATE_UNSELECTED = 0;
+    public static final int STATE_SELECTED = 1;
+    public static final int STATE_MIXED = 2;
 
-    /**
-     * This is a type-safe enumerated type
-     */
-    public static class State {
-        private State() {
-        }
-    }
-
-    public static final State NOT_SELECTED = new State();
-    public static final State SELECTED = new State();
-    public static final State DONT_CARE = new State();
-
-    private final TristateDecorator model;
-
-    public TristateCheckBox(String text, Icon icon, State initial) {
+    public TristateCheckBox(String text, Icon icon) {
         super(text, icon);
-        // Add a listener for when the mouse is pressed
-        super.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                grabFocus();
-                setState(getNextState(getState()));
-            }
-        });
-        // Reset the keyboard action map
-        ActionMap map = new ActionMapUIResource();
-        map.put("pressed", new AbstractAction() {
-            private static final long serialVersionUID = 7121802319351334948L;
-
-            public void actionPerformed(ActionEvent e) {
-                grabFocus();
-                setState(getNextState(getState()));
-            }
-        });
-        map.put("released", null);
-        SwingUtilities.replaceUIActionMap(this, map);
-        // set the model to the adapted model
-        model = new TristateDecorator(getModel());
-        setModel(model);
-        setState(initial);
-    }
-
-    public TristateCheckBox(String text, State initial) {
-        this(text, null, initial);
     }
 
     public TristateCheckBox(String text) {
-        this(text, DONT_CARE);
+        this(text, null);
     }
 
     public TristateCheckBox() {
         this(null);
     }
 
-    /**
-     * No one may add mouse listeners, not even Swing!
-     */
     @Override
-    public void addMouseListener(MouseListener l) {
-    }
-
-    /**
-     * Set the new state to either SELECTED, NOT_SELECTED or DONT_CARE.  If state == null, it is treated as DONT_CARE.
-     *
-     * @param state the new state
-     */
-    public void setState(State state) {
-        State old = model.getState();
-        model.setState(state);
-        if (old != state) {
-            firePropertyChange(PROPERTY_STATE, old, state);
-        }
-
-        // for Synthetica
-
-        if (LookAndFeelFactory.isSyntheticaLnfInstalled()
-                && (UIManager.getLookAndFeel().getClass().getName().startsWith(LookAndFeelFactory.SYNTHETICA_LNF_PREFIX) || LookAndFeelFactory.isLnfInUse(LookAndFeelFactory.SYNTHETICA_LNF))) {
-            if (state == DONT_CARE) {
-                setName("HalfSelected");
-            }
-            else {
-                setName("");
-            }
-        }
-    }
-
-    /**
-     * Return the current state, which is determined by the selection status of the model.
-     *
-     * @return the current state.
-     */
-    public State getState() {
-        return model.getState();
+    protected void init(String text, Icon icon) {
+        model = new TristateButtonModel();
+        setModel(model);
+        super.init(text, icon);
     }
 
     @Override
-    public void setSelected(boolean b) {
-        if (b) {
-            setState(SELECTED);
+    public void updateUI() {
+        super.updateUI();
+        if (isMixed()) {
+            adjustMixedIcon();
         }
         else {
-            setState(NOT_SELECTED);
+            restoreMixedIcon();
         }
     }
 
+    protected void adjustMixedIcon() {
+        setIcon(UIManager.getIcon("TristateCheckBox.icon"));
+    }
+
+    protected void restoreMixedIcon() {
+        setIcon(null);
+    }
+
     /**
-     * Exactly which Design Pattern is this?  Is it an Adapter, a Proxy or a Decorator?  In this case, my vote lies with
-     * the Decorator, because we are extending functionality and "decorating" the original model with a more powerful
-     * model.
+     * Checks if the check box is in mixed selection state.
+     *
+     * @return true or false.
      */
-    private class TristateDecorator implements ButtonModel {
-        private final ButtonModel other;
+    public boolean isMixed() {
+        return getState() == STATE_MIXED;
+    }
 
-        private State _state;
-
-        private TristateDecorator(ButtonModel other) {
-            this.other = other;
+    /**
+     * Sets the check box to mixed selection state.
+     *
+     * @param b true or false. True means mixed state. False means unselected state.
+     */
+    public void setMixed(boolean b) {
+        if (b) {
+            setState(STATE_MIXED);
         }
-
-        private void setState(State state) {
-            if (state == NOT_SELECTED) {
-                other.setArmed(false);
-                setPressed(false);
-                setSelected(false);
-            }
-            else if (state == SELECTED) {
-                other.setArmed(false);
-                setPressed(false);
-                setSelected(true);
-            }
-            else { // either "null" or DONT_CARE
-                other.setArmed(true);
-                setPressed(true);
-                setSelected(true);
-            }
-            _state = state;
-        }
-
-        /*
-         * The current state is embedded in the selection / armed state of the model.
-         * <p/>
-         * We return the SELECTED state when the checkbox is selected but not armed, DONT_CARE state when the checkbox is selected and armed (grey) and NOT_SELECTED when the checkbox is deselected.
-         */
-        private State getState() {
-            return _state == null ? DONT_CARE : _state;
-//            if (isSelected() && !isArmed()) {
-//                // normal black tick
-//                return SELECTED;
-//            }
-//            else if (isSelected() && isArmed()) {
-//                // don't care grey tick
-//                return DONT_CARE;
-//            }
-//            else {
-//                // normal deselected
-//                return NOT_SELECTED;
-//            }
-        }
-
-        /**
-         * Filter: No one may change the armed status except us.
-         */
-        public void setArmed(boolean b) {
-        }
-
-        /**
-         * We disable focusing on the component when it is not enabled.
-         */
-        public void setEnabled(boolean b) {
-            setFocusable(b);
-            other.setEnabled(b);
-        }
-
-        /**
-         * All these methods simply delegate to the "other" model that is being decorated.
-         */
-        public boolean isArmed() {
-            return other.isArmed();
-        }
-
-        public boolean isSelected() {
-            return other.isSelected();
-        }
-
-        public boolean isEnabled() {
-            return other.isEnabled();
-        }
-
-        public boolean isPressed() {
-            return other.isPressed();
-        }
-
-        public boolean isRollover() {
-            return other.isRollover();
-        }
-
-        public void setSelected(boolean b) {
-            other.setSelected(b);
-        }
-
-        public void setPressed(boolean b) {
-            other.setPressed(b);
-        }
-
-        public void setRollover(boolean b) {
-            other.setRollover(b);
-        }
-
-        public void setMnemonic(int key) {
-            other.setMnemonic(key);
-        }
-
-        public int getMnemonic() {
-            return other.getMnemonic();
-        }
-
-        public void setActionCommand(String s) {
-            other.setActionCommand(s);
-        }
-
-        public String getActionCommand() {
-            return other.getActionCommand();
-        }
-
-        public void setGroup(ButtonGroup group) {
-            other.setGroup(group);
-        }
-
-        public void addActionListener(ActionListener l) {
-            other.addActionListener(l);
-        }
-
-        public void removeActionListener(ActionListener l) {
-            other.removeActionListener(l);
-        }
-
-        public void addItemListener(ItemListener l) {
-            other.addItemListener(l);
-        }
-
-        public void removeItemListener(ItemListener l) {
-            other.removeItemListener(l);
-        }
-
-        public void addChangeListener(ChangeListener l) {
-            other.addChangeListener(l);
-        }
-
-        public void removeChangeListener(ChangeListener l) {
-            other.removeChangeListener(l);
-        }
-
-        public Object[] getSelectedObjects() {
-            return other.getSelectedObjects();
+        else {
+            setState(STATE_UNSELECTED);
         }
     }
 
     /**
-     * We rotate between NOT_SELECTED, SELECTED and DONT_CARE. Subclass can override this method to tell the check box
-     * what next state is. Here is the default implementation.
+     * Gets the selection state. It could be one of the three states as defined - {@link #STATE_SELECTED}, {@link
+     * #STATE_UNSELECTED} and {@link #STATE_MIXED}.
+     *
+     * @return one of the three selection states.
+     */
+    public int getState() {
+        if (model instanceof TristateButtonModel)
+            return ((TristateButtonModel) model).getState();
+        else {
+            throw new IllegalStateException("TristateButtonModel is required for TristateCheckBox");
+        }
+    }
+
+    /**
+     * Sets the selection state. It could be one of the three states as defined - {@link #STATE_SELECTED}, {@link
+     * #STATE_UNSELECTED} and {@link #STATE_MIXED}.
+     *
+     * @param state one of the three selection states.
+     */
+    public void setState(int state) {
+        if (model instanceof TristateButtonModel) {
+            int old = ((TristateButtonModel) model).getState();
+            if (old != state) ((TristateButtonModel) model).setState(state);
+            stateUpdated(state);
+        }
+        else {
+            throw new IllegalStateException("TristateButtonModel is required for TristateCheckBox");
+        }
+    }
+
+    /**
+     * This method is called when the selection state changes.
+     *
+     * @param state the new selection state.
+     */
+    protected void stateUpdated(int state) {
+        if (state == STATE_MIXED) {
+            adjustMixedIcon();
+            Object cp = UIDefaultsLookup.get("TristateCheckBox.setMixed.clientProperty");
+            if (cp != null) {
+                putClientProperty(((Object[]) cp)[0], ((Object[]) cp)[1]); // for Aqua L&F
+            }
+            String name = UIDefaultsLookup.getString("TristateCheckBox.setMixed.componentName");
+            if (name != null) {
+                setName(name); // for Synthetica
+            }
+        }
+        else {
+            restoreMixedIcon();
+            Object cp = UIDefaultsLookup.get("TristateCheckBox.clearMixed.clientProperty");
+            if (cp != null) {
+                putClientProperty(((Object[]) cp)[0], ((Object[]) cp)[1]); // for Aqua L&F
+            }
+            String name = UIDefaultsLookup.getString("TristateCheckBox.clearMixed.componentName");
+            if (name != null) {
+                setName(name); // for Synthetica
+            }
+        }
+    }
+
+    /**
+     * We rotate between STATE_UNSELECTED, STATE_SELECTED and STATE_MIXED. Subclass can override this method to tell the
+     * check box what next state is. Here is the default implementation.
      * <code><pre>
-     *   if (current == NOT_SELECTED) {
-     *       return SELECTED;
-     *   }
-     *   else if (current == SELECTED) {
-     *       return DONT_CARE;
-     *   }
-     *   else {
-     *       return NOT_SELECTED;
-     *   }
+     * if (current == STATE_UNSELECTED) {
+     *     return STATE_SELECTED;
+     * }
+     * else if (current == STATE_SELECTED) {
+     *     return STATE_MIXED;
+     * }
+     * else if (current == STATE_MIXED) {
+     *     return STATE_UNSELECTED;
+     * }
      * </code></pre>
      *
      * @param current the current state
      * @return the next state of the current state.
      */
-    protected State getNextState(State current) {
-        if (current == NOT_SELECTED) {
-            return SELECTED;
+    protected int getNextState(int current) {
+        if (current == STATE_UNSELECTED) {
+            return STATE_SELECTED;
         }
-        else if (current == SELECTED) {
-            return DONT_CARE;
+        else if (current == STATE_SELECTED) {
+            return STATE_MIXED;
         }
-        else /*if (current == DONT_CARE)*/ {
-            return NOT_SELECTED;
+        else /*if (current == STATE_MIXED)*/ {
+            return STATE_UNSELECTED;
         }
     }
 }

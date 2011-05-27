@@ -9,9 +9,6 @@ import java.awt.*;
  */
 public class ScrollableButtonPanel extends ButtonPanel implements Scrollable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6329512076145429068L;
 
     public ScrollableButtonPanel() {

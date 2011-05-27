@@ -13,9 +13,6 @@ import java.util.EventObject;
  */
 public class ButtonEvent extends EventObject {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 392703660104570538L;
 
     /**

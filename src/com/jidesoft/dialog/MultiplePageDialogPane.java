@@ -12,7 +12,6 @@ import com.jidesoft.swing.JideScrollPane;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -44,9 +43,6 @@ import java.util.*;
  * is added to StandardDialog.
  */
 public class MultiplePageDialogPane extends StandardDialogPane {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -8968638943947885121L;
 
     /**
@@ -203,12 +199,9 @@ public class MultiplePageDialogPane extends StandardDialogPane {
         _okButton.setAction(getOKAction());
         _cancelButton.setAction(getCancelAction());
         _applyButton.setAction(new AbstractAction(ButtonResources.getResourceBundle(Locale.getDefault()).getString("Button.apply")) {
-            /**
-	     * 
-	     */
-	    private static final long serialVersionUID = 3413994234663396927L;
+            private static final long serialVersionUID = 3413994234663396927L;
 
-	    public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 if (getCurrentPage() != null) {
                     getCurrentPage().fireButtonEvent(ButtonEvent.DISABLE_BUTTON, APPLY);
                 }
@@ -861,12 +854,9 @@ public class MultiplePageDialogPane extends StandardDialogPane {
             button.setToolTipText(optionsPanel.getDescription());
             button.setEnabled(optionsPanel.isPageEnabled());
             button.addActionListener(new AbstractAction() {
-                /**
-		 * 
-		 */
-		private static final long serialVersionUID = -8913013217983540816L;
+                private static final long serialVersionUID = -8913013217983540816L;
 
-		public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(ActionEvent e) {
                     setCurrentPage(optionsPanel, buttonsPanel);
                     if (getCurrentPage() == optionsPanel) {
                         group.setSelected(button.getModel(), true);
@@ -900,12 +890,9 @@ public class MultiplePageDialogPane extends StandardDialogPane {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         final JScrollPane pane = new JScrollPane(buttonsPanel) {
-            /**
-	     * 
-	     */
-	    private static final long serialVersionUID = 7258489670834946958L;
+            private static final long serialVersionUID = 7258489670834946958L;
 
-	    @Override
+            @Override
             public Dimension getPreferredSize() {
                 if (buttonsPanel.getAlignment() == SwingConstants.TOP || buttonsPanel.getAlignment() == SwingConstants.BOTTOM)
                     return new Dimension(buttonsPanel.getPreferredSize().width + getVerticalScrollBar().getPreferredSize().width, 5);
@@ -970,12 +957,9 @@ public class MultiplePageDialogPane extends StandardDialogPane {
         AbstractDialogPage optionsPanel = _pageList.getPage(i);
         final JideButton button = createIconButton(optionsPanel.getTitle(), optionsPanel.getIcon());
         button.addActionListener(new AbstractAction(optionsPanel.getTitle(), optionsPanel.getIcon()) {
-            /**
-	     * 
-	     */
-	    private static final long serialVersionUID = -2375074433514421417L;
+            private static final long serialVersionUID = -2375074433514421417L;
 
-	    public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 group.setSelected(button.getModel(), true);
                 setCurrentPage(_pageList.getPageByFullTitle(e.getActionCommand()), buttonsPanel);
             }

@@ -19,9 +19,6 @@ import java.awt.*;
  */
 public class ButtonPanel extends JPanel implements ButtonListener, ButtonNames {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -7840551457656712357L;
 
     /**

@@ -15,9 +15,6 @@ import java.util.List;
  * A list of AbstractDialogPage or its subclasses. It is used by MultiplePageDialog and Wizard.
  */
 public class PageList extends DefaultComboBoxModel {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 436559750018384074L;
 
     /**

@@ -14,6 +14,11 @@ import java.util.EventObject;
 public class ButtonEvent extends EventObject {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 392703660104570538L;
+
+    /**
      * The first number in the range of IDs used for <code>ButtonEvent</code>.
      */
     public static final int BUTTON_EVENT_FIRST = AWTEvent.RESERVED_ID_MAX + 1300;

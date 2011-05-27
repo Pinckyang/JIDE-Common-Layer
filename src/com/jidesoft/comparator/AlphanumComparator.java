@@ -61,7 +61,6 @@ public class AlphanumComparator implements Comparator<CharSequence> {
     /**
      * Length of string is passed in for improved efficiency (only need to calculate it once) *
      */
-    @SuppressWarnings({"JavaDoc"})
     private String getChunk(CharSequence s, int slength, int marker) {
         StringBuilder chunk = new StringBuilder();
         char c = s.charAt(marker);

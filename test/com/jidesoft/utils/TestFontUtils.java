@@ -20,7 +20,8 @@ public class TestFontUtils extends TestCase {
         }
         assertEquals(100, FontUtils.getDerivedFontCacheSize());
         try {
-            byte[] block = new byte[200 * 1024 * 1024];
+            @SuppressWarnings("unused")
+	    byte[] block = new byte[200 * 1024 * 1024];
         }
         catch (OutOfMemoryError ex) {
             // ignore

@@ -9,7 +9,7 @@ public class TestEnumConverter extends TestCase {
     }
 
     public void testEnumConverterEnum() {
-        ObjectConverter converter1 = new EnumConverter("Rank", Rank.values(), new String[]{
+        new EnumConverter("Rank", Rank.values(), new String[]{
                 Rank.DEUCE.toString(),
                 Rank.THREE.toString(),
                 Rank.FOUR.toString(),

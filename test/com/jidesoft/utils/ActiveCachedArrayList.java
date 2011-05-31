@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 
 public class ActiveCachedArrayList<E> extends ArrayList<E> {
+    private static final long serialVersionUID = 8336296150304429498L;
     private HashMap<Object, Integer> _indexCache;
     private boolean lazyCache = false;
 
@@ -31,7 +32,7 @@ public class ActiveCachedArrayList<E> extends ArrayList<E> {
     @Override
     public int indexOf(Object elem) {
         if (_indexCache == null) {
-            _indexCache = new HashMap();
+            _indexCache = new HashMap<Object, Integer>();
         }
         Integer o = _indexCache.get(elem);
         if (o != null) {
@@ -115,7 +116,7 @@ public class ActiveCachedArrayList<E> extends ArrayList<E> {
     }
 
     public void recache() {
-        _indexCache = new HashMap();
+        _indexCache = new HashMap<Object, Integer>();
         Integer i = 0;
         for (Object elem : this) {
             _indexCache.put(elem, i);

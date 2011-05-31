@@ -5,9 +5,9 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 
 public class TestCachedArrayList extends TestCase {
-    CachedArrayList cachedList;
-    ActiveCachedArrayList activeCachedList;
-    ArrayList list;
+    CachedArrayList<String> cachedList;
+    ActiveCachedArrayList<String> activeCachedList;
+    ArrayList<String> list;
     public static final int SIZE = 1000;
 
     @Override
@@ -15,7 +15,7 @@ public class TestCachedArrayList extends TestCase {
         super.setUp();
         long before, after;
 
-        list = new ArrayList();
+        list = new ArrayList<String>();
         before = System.nanoTime();
         for (int i = 0; i < SIZE; i++) {
             list.add(0, String.valueOf(i));
@@ -24,7 +24,7 @@ public class TestCachedArrayList extends TestCase {
         System.out.println("Creating ArrayList of length " + SIZE
                 + " took " + String.valueOf((after - before) / SIZE) + "ms");
 
-        cachedList = new CachedArrayList();
+        cachedList = new CachedArrayList<String>();
 //        cachedList.setLazyCaching(true);
         before = System.nanoTime();
         for (int i = 0; i < SIZE; i++) {
@@ -34,7 +34,7 @@ public class TestCachedArrayList extends TestCase {
         System.out.println("Creating CachedArrayList of length " + SIZE
                 + " took " + String.valueOf((after - before) / SIZE) + "ms");
 
-        activeCachedList = new ActiveCachedArrayList();
+        activeCachedList = new ActiveCachedArrayList<String>();
 //        activeCachedList.setLazy(true);
         before = System.nanoTime();
         for (int i = 0; i < SIZE; i++) {
@@ -117,7 +117,7 @@ public class TestCachedArrayList extends TestCase {
     }
 
     public void testAddRemove() {
-        CachedArrayList<String> list = new CachedArrayList();
+        CachedArrayList<String> list = new CachedArrayList<String>();
 
         list.setLazyCaching(false);
         list.add("1");

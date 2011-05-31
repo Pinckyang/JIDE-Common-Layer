@@ -47,7 +47,8 @@ public class CornerScrollerVisualTest {
     }
     
     private static class LargeView extends JPanel {
-        private final int scale;
+	private static final long serialVersionUID = -882747598324950882L;
+	private final int scale;
 
         public LargeView(int scale) {
             this.scale = scale;

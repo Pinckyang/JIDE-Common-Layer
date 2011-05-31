@@ -152,7 +152,8 @@ public class FileIntelliHints extends AbstractListIntelliHints {
     }
 
     private class PrefixListCellRenderer extends DefaultListCellRenderer {
-        private String _prefix;
+	private static final long serialVersionUID = 2092966667985417367L;
+	private String _prefix;
 
         public PrefixListCellRenderer(String prefix) {
             _prefix = prefix;

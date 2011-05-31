@@ -515,7 +515,7 @@ public class IconsFactory {
     }
 
 
-    private static Image readImageIcon(Class clazz, String file, InputStream resource) throws IOException {
+    private static Image readImageIcon(Class<?> clazz, String file, InputStream resource) throws IOException {
         final byte[][] buffer = new byte[1][];
         try {
             BufferedInputStream in = new BufferedInputStream(resource);

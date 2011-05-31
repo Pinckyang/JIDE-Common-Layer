@@ -24,6 +24,10 @@ import java.io.Serializable;
 public class StyledListCellRenderer extends StyledLabel
         implements ListCellRenderer, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2533971666851061873L;
     protected static Border noFocusBorder;
 
     /**
@@ -240,6 +244,11 @@ public class StyledListCellRenderer extends StyledLabel
      */
     public static class UIResource extends StyledListCellRenderer
             implements javax.swing.plaf.UIResource {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2192090769430023402L;
     }
 
 }

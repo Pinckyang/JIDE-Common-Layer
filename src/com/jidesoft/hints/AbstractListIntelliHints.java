@@ -78,7 +78,12 @@ public abstract class AbstractListIntelliHints extends AbstractIntelliHints {
      */
     protected JList createList() {
         return new JList() {
-            @Override
+            /**
+	     * 
+	     */
+	    private static final long serialVersionUID = -5560613099092975071L;
+
+	    @Override
             public int getVisibleRowCount() {
                 int size = getModel().getSize();
                 return size < super.getVisibleRowCount() ? size : super.getVisibleRowCount();

@@ -13,6 +13,10 @@ import com.jidesoft.converter.AbstractContext;
  */
 public class GrouperContext extends AbstractContext {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * Default converter context with empty name and no user object.
      */
     public static GrouperContext DEFAULT_CONTEXT = new GrouperContext("");
